@@ -11,15 +11,13 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
+        'promoterss' => [
             'driver' => 'session',
             'provider' => 'promoter',
-//            'hash' => false,
         ],
         'promoter' => [
-            'driver' => 'session',
+            'driver' => 'passport',
             'provider' => 'promoter',
-//            'hash' => false,
         ],
     ],
 
@@ -28,11 +26,15 @@ return [
             'driver' => 'eloquent',
             'model' => \App\Models\Promoter::class,
         ],
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => \App\User::class,
+        ],
 
-         'users' => [
-             'driver' => 'database',
-             'table' => 'users',
-         ],
+//         'users' => [
+//             'driver' => 'database',
+//             'table' => 'users',
+//         ],
     ],
     'passwords' => [
         'users' => [

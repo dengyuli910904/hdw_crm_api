@@ -25,5 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        // token认证有效期2小时
+        Passport::tokensExpireIn(now()->addHour(2));
+        // 刷新token认证有效期30天
+        Passport::refreshTokensExpireIn(now()->addDays(30));
     }
 }

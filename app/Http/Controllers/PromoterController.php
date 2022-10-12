@@ -19,8 +19,6 @@ class PromoterController extends ApiController
         $remember = $request->input('is_remember', false);
         if(auth()->guard('promoter')->attempt(['email' => $request->loginname, 'password' => $request->password, 'status' => Promoter::STATUS_ENABLED], $remember)) {
             $user = auth()->guard('promoter')->user();
-//            auth()->login($user, $remember);
-//            dd($user);
             $token = $user->createToken('api')->accessToken;
             $user->setRememberToken($token);
             $data = [
@@ -31,36 +29,36 @@ class PromoterController extends ApiController
                     'loginname' => $user->email,
                     'phone' => $user->phone
                 ],
-                'token' => $token
+                'token' => $token,
+//                'user' => auth()->user()
             ];
+
             return $this->response->array($data);
         }else{
             $this->errorResponse('40002', '用户名或密码错误！');
         }
     }
-//    public function login(AuthorizationRequest $originRequest, AuthorizationServer $server, ServerRequestInterface $serverRequest){
-//        $promoter = Promoter::where(['status' => Promoter::STATUS_ENABLED, 'email'=>$originRequest->username])->first();
-//        if(is_null($promoter)){
-//            $this->errorResponse('40001', '用户名或密码错误！');
-//        }
-//        if(6 > strlen($originRequest->password)){
-//            $this->errorResponse('40002', '您输入的密码格式不正确！');
-//        }
-////        $pwd = bcrypt($promoter->solt.$originRequest->password);
-////        dd($promoter->password, bcrypt('12345678'));
-////        if($promoter->password !== $pwd){
-////            $this->errorResponse('40002', '用户名或密码错误！');
-////        }
-//        return $this->issueToken($server, $serverRequest);
-//    }
-//
-//    protected function issueToken(AuthorizationServer $server, ServerRequestInterface $serverRequest){
-//        try{
-//            return $server->respondToAccessTokenRequest($serverRequest, new Psr7Response);
-//        }catch (OAuthServerException $e){
-//            return $this->response->errorUnauthorized($e->getMessage(), $e->getCode());
-//        }
-//    }
 
+    public function login(Request $request){
+        $validator=\Validator::make($request->all(),[
+            'email'=>'required',
+            'password'=>'required',
+        ]);
+        if ($validator->fails()){
+            return ['code'=>500,'msg'=>$validator->errors()->first()];
+        }
+
+        //应为基于auth登录，所匹配的字段不能出现中文
+//        dd($request->all());
+        $bool=auth()->guard('promoterss')->attempt($request->all());
+        if ($bool){
+            $user=auth()->guard('promoterss')->user();
+            //在这里生成token
+            $token=$user->createToken('promoter')->accessToken;
+            $data=['token'=>$token,'expire'=>7200];
+            return ['code'=>200,'msg'=>'登录成功','data'=>$data];
+        }
+        return ['code'=>500,'msg'=>'账号密码错误'];
+    }
 
 }

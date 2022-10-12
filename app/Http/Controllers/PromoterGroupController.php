@@ -11,13 +11,11 @@ use Illuminate\Http\Request;
 class PromoterGroupController extends ApiController
 {
     public function getlist(PromoterGroupRequest $request){
-        dd($this->auth->check());
         $group = app(PromoteGroup::class);
         $list = $group->where(function($query){
 
         })->orderBy('id')
             ->paginate($request->input('per_page', 10));
-//        dd($list);
         return $this->response->paginator($list , PromoterGroupTransformer::class);
     }
 
@@ -29,13 +27,13 @@ class PromoterGroupController extends ApiController
         $group->pictures = $request->input('pictures');
         $group->active_members = $request->input('active_members');
         $group->status = $request->input('enable' , PromoteGroup::STATUS_ENABLED);
-        $group->promoter_id = 1; //auth()->id;
+        $group->promoter_id = auth()->id();
         $group->opterator = $request->input('opterator');
 
         $log = new PromoterGroupLog();
         $log->promote_group_id = $group->id;
         $log->status = $request->input('status');
-        $log->promoter_id = 1; //auth()->id;
+        $log->promoter_id = auth()->id();
         $group->save();
         return $this->successResponse(200, '操作成功');
     }
@@ -49,7 +47,7 @@ class PromoterGroupController extends ApiController
         $group->pictures = $request->input('pictures');
         $group->active_members = $request->input('active_members');
         $group->status = $request->input('enable', PromoteGroup::STATUS_ENABLED);
-        $group->promoter_id = 1; //auth()->id;
+        $group->promoter_id = auth()->id();
         $group->opterator = $request->input('opterator');
         $group->save();
 

@@ -21,13 +21,12 @@ $api->version('v1',[
         'prefix'=>'promoter',
         'middleware' => ['auth:promoter']
     ],function($api){
-        $api->post('/login', 'PromoterController@login');
         $api->get('/grouplist','PromoterGroupController@getlist');
         $api->post('/groupadd','PromoterGroupController@add');
         $api->put('/groupedit','PromoterGroupController@edit');
         $api->delete('/groupdel','PromoterGroupController@del');
     });
-    $api->post('oauth/token', 'PromoterController@token');
+    $api->post('/promoter/login', 'PromoterController@login');
 
     // 网页记录用户姓名，手机号
     $api->group(['prefix'=>'plat'],function($api) {
